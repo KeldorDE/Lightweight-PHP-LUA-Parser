@@ -17,7 +17,7 @@ class LUAParser {
 	/**
 	 * Contains the nuber of array elements.
 	 */
-	private $lines = 0;
+	private $_lines = 0;
 
 	/**
 	 * Contains the parsed LUA data from file.
@@ -38,7 +38,7 @@ class LUAParser {
 
 		// Initialise vars
 		$this->_lua = array();
-		$this->_post = 0;
+		$this->_pos = 0;
 		$this->_lines = 0;
 		$this->data = array();
 
@@ -72,34 +72,26 @@ class LUAParser {
 
 	/**
 	 * parseLUA - Parses the contents of the LUA file.
-	 *
-	 * @param	mixed	$position	The Position inside the LUA array.
 	 */
-	private function &parseLUA(&$position = false) {
-
-		// Set initial position
-		if($position === false) {
-			$position = &$this->_pos;
-		}
+	private function &parseLUA() {
 
 		// Initialise vars
 		$data = array();
 		$end = false;
-		$i = $position;
 
 		// The end of array has not been reached
-		if($position < $this->_lines) {
+		if($this->_pos < $this->_lines) {
 
 			// Loop through LUA array
 			while($end === false) {
 
 				// End reached
-				if($i >= $this->_lines) {
+				if($this->_pos >= $this->_lines) {
 					break;
 				}
 
 				// Explode by assignment
-				$parts = explode('=', $this->_lua[$i]);
+				$parts = explode('=', $this->_lua[$this->_pos]);
 
 				// Trim values
 				$parts[0] = trim($parts[0]);
@@ -113,16 +105,16 @@ class LUAParser {
 				if(isset($parts[1]) === true && ($parts[1] === '{' || empty($parts[1]) === true)) {
 
 					// When Bracket in next line, jump the next line
-					$i += (empty($parts[1]) === true) ? 2 : 1;
+					$this->_pos += (empty($parts[1]) === true) ? 2 : 1;
 
 					// Parse content
-					$data[$this->getValue($parts[0], true)] = $this->parseLUA($i);
+					$data[$this->getValue($parts[0], true)] = $this->parseLUA();
 				}
 
 				// End of table
 				else if($parts[0] === '}' || $parts[0] === '},') {
 					$end = true;
-					$i++;
+					$this->_pos++;
 				}
 
 				// Get value
@@ -137,13 +129,10 @@ class LUAParser {
 					}
 
 					// Increase position
-					$i++;
+					$this->_pos++;
 				}
 			}
 		}
-
-		// Set temp position to position pointer
-		$position = $i;
 
 		// Return fetched data by reference
 		return $data;
@@ -172,7 +161,7 @@ class LUAParser {
 			if(mb_substr($str, -2) === '",') {
 				$str = mb_substr($str, 0, -2);
 			}
-			else if(mb_substr($str, -1) === '"') {
+			else if(mb_substr($str, -1) === '"' || mb_substr($str, -1) === ',') {
 				$str = mb_substr($str, 0, -1);
 			}
 
