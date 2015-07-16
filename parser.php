@@ -119,6 +119,8 @@ class LUAParser {
 					$end = true;
 					$i++;
 				}
+
+				// Get value
 				else {
 
 					// Save key to avoid multiply function execution
