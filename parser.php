@@ -45,9 +45,6 @@ class LUAParser {
 		// Read the file
 		if(($lua = file_get_contents($path)) !== false) {
 
-			// Move all brackets to the same line as the key
-			$lua = preg_replace('/\s+=\s+\n+(\s+|\t+){/i', ' = {' . PHP_EOL, $lua);
-
 			// Split by new line and count lines
 			$this->_lua = explode("\n", $lua);
 			$this->_lines = count($this->_lua);
@@ -102,20 +99,28 @@ class LUAParser {
 				}
 
 				// Explode by assignment
-				$strs = explode('=', $this->_lua[$i]);
+				$parts = explode('=', $this->_lua[$i]);
 
 				// Trim values
-				$strs[0] = trim($strs[0]);
-				$strs[1] = trim($strs[1]);
+				$parts[0] = trim($parts[0]);
+
+				// Trim if exists
+				if(isset($parts[1]) === true) {
+					$parts[1] = trim($parts[1]);
+				}
 
 				// Start of table
-				if(isset($strs[1]) === true && $strs[1] === '{') {
-					$i++;
-					$data[$this->getValue($strs[0], true)] = $this->parseLUA($i);
+				if(isset($parts[1]) === true && ($parts[1] === '{' || empty($parts[1]) === true)) {
+
+					// When Bracket in next line, jump the next line
+					$i += (empty($parts[1]) === true) ? 2 : 1;
+
+					// Parse content
+					$data[$this->getValue($parts[0], true)] = $this->parseLUA($i);
 				}
 
 				// End of table
-				else if($strs[0] === '}' || $strs[0] === '},') {
+				else if($parts[0] === '}' || $parts[0] === '},') {
 					$end = true;
 					$i++;
 				}
@@ -124,11 +129,11 @@ class LUAParser {
 				else {
 
 					// Save key to avoid multiply function execution
-					$key = $this->getValue($strs[0], true);
+					$key = $this->getValue($parts[0], true);
 
 					// Data has been found
-					if(mb_strlen($key) > 0 && mb_strlen($strs[1]) > 0) {
-						$data[$key] = $this->getValue($strs[1], false);
+					if(mb_strlen($key) > 0 && mb_strlen($parts[1]) > 0) {
+						$data[$key] = $this->getValue($parts[1], false);
 					}
 
 					// Increase position
