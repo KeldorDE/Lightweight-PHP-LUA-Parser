@@ -15,7 +15,7 @@ $parser = new Parser();
 // Catch parser exceptions
 try {
 	
-	// Parse a LUA fuile
+	// Parse a LUA file
 	$parser->parseFile('data.lua');
 	
 	// Print the parsed array
