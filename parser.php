@@ -29,8 +29,7 @@ class LUAParser {
 	 *
 	 * @param	string	$path	A valid LUA file path.
 	 */
-	public function parseFile($path)
-	{
+	public function parseFile($path) {
 
 		// Check for file
 		if(is_file($path) === false) {
