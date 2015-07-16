@@ -58,7 +58,7 @@ class LUAParser {
 			}
 
 			// Parse the LUA data
-			$this->data = $this->parseLUA($this->_pos);
+			$this->data = $this->parseLUA();
 
 			// Free resources
 			unset($this->_lua);
