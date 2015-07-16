@@ -54,7 +54,7 @@ class LUAParser {
 
 			// Very small array, something is wrong
 			if($this->_lines < 2) {
-				throw new Exception('Input did not validate as array');
+				throw new Exception('Could not parse LUA file');
 			}
 
 			// Parse the LUA data
