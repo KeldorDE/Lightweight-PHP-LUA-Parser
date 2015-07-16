@@ -7,22 +7,22 @@ class LUAParser {
 	/**
 	 * Contains the lines of the LUA file.
 	 */
-	private $_lua = array();
+	private $_lua;
 
 	/**
 	 * Contains the current position of the LUA array.
 	 */
-	private $_pos = 0;
+	private $_pos;
 
 	/**
 	 * Contains the nuber of array elements.
 	 */
-	private $_lines = 0;
+	private $_lines;
 
 	/**
 	 * Contains the parsed LUA data from file.
 	 */
-	public $data = array();
+	public $data;
 
 	/**
 	 * parseFile - Read and parse the given file.
