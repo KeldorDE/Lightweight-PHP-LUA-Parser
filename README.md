@@ -14,10 +14,10 @@ $parser = new LUAParser();
 
 // Catch parser exceptions
 try {
-	
+
 	// Parse a LUA file
 	$parser->parseFile('data.lua');
-	
+
 	// Print the parsed array
 	print_r($parser->data);
 }
