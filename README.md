@@ -10,7 +10,7 @@ PHP Class for parsing LUA files
 require('parser.php');
 
 // Initialise the paraser
-$parser = new Parser();
+$parser = new LUAParser();
 
 // Catch parser exceptions
 try {
