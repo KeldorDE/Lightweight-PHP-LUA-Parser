@@ -19,7 +19,7 @@ catch(Exception $e) {
 }
 ```
 
-### Multiply file usage: ###
+### Multiple file usage: ###
 
 ```php
 require('parser.php');
