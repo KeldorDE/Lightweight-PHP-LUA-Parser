@@ -1,6 +1,8 @@
 <?php
 /**
  * A class to parse LUA files to an PHP array.
+ *
+ * @version	1.0.2
  */
 class LUAParser {
 
@@ -90,13 +92,13 @@ class LUAParser {
 					break;
 				}
 
-				// Explode by assignment
+				// Explode by assignment character
 				$parts = explode('=', $this->_lua[$this->_pos]);
 
 				// Trim values
 				$parts[0] = trim($parts[0]);
 
-				// Trim if exists
+				// Trim if part exists
 				if(isset($parts[1]) === true) {
 					$parts[1] = trim($parts[1]);
 				}
@@ -104,7 +106,7 @@ class LUAParser {
 				// Start of table
 				if(isset($parts[1]) === true && ($parts[1] === '{' || empty($parts[1]) === true)) {
 
-					// When Bracket in next line, jump the next line
+					// When Bracket is in next line, skip the next line
 					$this->_pos += (empty($parts[1]) === true) ? 2 : 1;
 
 					// Parse content
@@ -154,7 +156,7 @@ class LUAParser {
 			$str = str_replace(array('"', '[', ']'), '', $str);
 		}
 
-		// Remove controls characters from value
+		// Remove control characters from value
 		else {
 
 			// Remove ending control characters
