@@ -1,0 +1,14 @@
+# 1.0.3
+- Added optional syntax checking for LUA file
+
+# 1.0.2
+- Support for brackets in new line
+- Some performance optimizations
+- Bugfix: Undefined index warning in parseLUA() function
+
+# 1.0.1
+- Some performance optimizations
+- Support for brackets in new line
+
+# 1.0.0
+- First release of the Lightweight PHP LUA Parser

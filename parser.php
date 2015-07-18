@@ -2,7 +2,7 @@
 /**
  * A class to parse LUA files to an PHP array.
  *
- * @version	1.0.2
+ * @version	1.0.3
  */
 class LUAParser {
 
@@ -22,6 +22,11 @@ class LUAParser {
 	private $_lines;
 
 	/**
+	 * Contains a list of keys that have to be present one or more times in the LUA file.
+	 */
+	private $_syntax_tokens = array();
+
+	/**
 	 * Contains the parsed LUA data from file.
 	 */
 	public $data;
@@ -38,37 +43,108 @@ class LUAParser {
 			throw new Exception('Invalid input file (' . $path . ')');
 		}
 
-		// Initialise vars
+		// Initialise/reset vars
 		$this->_lua = array();
+		$this->data = array();
 		$this->_pos = 0;
 		$this->_lines = 0;
-		$this->data = array();
 
 		// Read the file
 		if(($lua = file_get_contents($path)) !== false) {
 
-			// Split by new line and count lines
-			$this->_lua = explode("\n", $lua);
-			$this->_lines = count($this->_lua);
+			// Check syntax if one or more keys has been added
+			if($this->checkSyntax($lua) === true) {
 
-			// Free resources
-			unset($lua);
+				// Split by new line and count lines
+				$this->_lua = explode("\n", $lua);
+				$this->_lines = count($this->_lua);
 
-			// Very small array, something is wrong
-			if($this->_lines < 2) {
-				throw new Exception('Could not parse LUA file');
+				// Free resources
+				unset($lua);
+
+				// Very small array, something is wrong
+				if($this->_lines < 2) {
+					throw new Exception('Could not parse LUA file');
+				}
+
+				// Parse the LUA data
+				$this->data = $this->parseLUA();
+
+				// Free resources
+				unset($this->_lua);
 			}
 
-			// Parse the LUA data
-			$this->data = $this->parseLUA();
+			// One or more keys are missing in LUA file
+			else {
 
-			// Free resources
-			unset($this->_lua);
+				// Free resources
+				unset($lua);
+
+				// Throw an syntax error exception
+				throw new Exception('Syntax error in lua file (' . $path . ')');
+			}
 		}
 
 		// Could not read file
 		else {
 			throw new Exception('Could not read input file (' . $path . ')');
+		}
+	}
+
+	/**
+	 * addSyntaxKey - Adds a LUA Key to the syntax checklist, all defined keys must be present one or more times in the LUA file.
+	 *
+	 * @param	string	$key	An key that must be present one or more times in the LUA file.
+	 */
+	public function addSyntaxKey($key) {
+		if(in_array($key, $this->_syntax_tokens) === false) {
+			array_push($this->_syntax_tokens, $key);
+		}
+	}
+
+	/**
+	 * removeSyntaxKey - Removes the given key from the syntax checklist.
+	 *
+	 * @param	string	$key	An key that must be present one or more times in the LUA file.
+	 */
+	public function removeSyntaxKey($key) {
+		if(in_array($key, $this->_syntax_tokens) === true) {
+			unset($this->_syntax_tokens[$key]);
+		}
+	}
+
+	/**
+	 * resetSyntaxKeys - Removes all keys from the syntax checklist.
+	 */
+	public function resetSyntaxKeys() {
+		if(isset($this->_syntax_tokens[0]) === true) {
+			$this->_syntax_tokens = array();
+		}
+	}
+
+	/**
+	 * checkSyntax - Checks if the list of defined tokens available in the LUA file.
+	 *
+	 * @param	ref string	$lua The content of the LUA file.
+	 * @return	bool		Return True ist the syntax is ok or no tokens were specified, otherwise the function will return False.
+	 */
+	private function checkSyntax(&$lua) {
+
+		// Check if some data available
+		if(isset($this->_syntax_tokens[0]) === true) {
+			foreach($this->_syntax_tokens as $token) {
+				if(mb_strpos($lua, $token) === false) {
+					return false;
+				}
+			}
+
+			// Return true if we have no early return in case of missing token
+			return true;
+		}
+
+		// No syntax checking, validate data
+		else {
+			return true;
 		}
 	}
 
