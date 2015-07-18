@@ -3,7 +3,6 @@ Lightweight-PHP-LUA-Parser
 
 PHP Class for parsing LUA files
 
-
 ### Performance data: ###
 Tested with PHP version 5.6.11
 
