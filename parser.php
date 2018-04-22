@@ -197,13 +197,19 @@ class LUAParser {
 
 				// Get value
 				else {
-
-					// Save key to avoid multiply function execution
-					$key = $this->getValue($parts[0], true);
-
 					// Data has been found
-					if(mb_strlen($key) > 0 && mb_strlen($parts[1]) > 0) {
-						$data[$key] = $this->getValue($parts[1], false);
+					if (isset($parts[1])) {
+						// There's a key, so save key to avoid multiply function execution
+						$key = $this->getValue($parts[0], true);
+
+						if(mb_strlen($key) > 0 && mb_strlen($parts[1]) > 0) {
+							$data[$key] = $this->getValue($parts[1], false);
+						}
+					} else {
+						// There isn't a key, so just add to the end of the array
+						if (mb_strlen($parts[0]) > 0) {
+							$data[] = $this->getValue($parts[0], false);
+						}
 					}
 
 					// Increase position
