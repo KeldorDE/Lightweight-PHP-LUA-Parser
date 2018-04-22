@@ -180,7 +180,7 @@ class LUAParser {
 				}
 
 				// Start of table
-				if(isset($parts[1]) === true && ($parts[1] === '{' || empty($parts[1]) === true)) {
+				if(isset($parts[1]) === true && ($parts[1] === '{' || (empty($parts[1]) === true && $parts[1] != 0))) {
 
 					// When Bracket is in next line, skip the next line
 					$this->_pos += (empty($parts[1]) === true) ? 2 : 1;
