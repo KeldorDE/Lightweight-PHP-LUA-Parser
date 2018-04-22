@@ -195,6 +195,12 @@ class LUAParser {
 					$this->_pos++;
 				}
 
+				// { }, case
+				else if(isset($parts[1]) == true && $parts[1][0] == '{' &&  mb_strlen($parts[1]) > 1 && ($subpart = trim(substr($parts[1], 1))) && ($subpart == '},' || $subpart == '}')) {
+					$data[$this->getValue($parts[0], true)] = array();
+					$this->_pos++;
+				}
+
 				// Get value
 				else {
 					// Data has been found
