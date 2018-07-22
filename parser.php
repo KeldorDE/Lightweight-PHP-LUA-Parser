@@ -180,7 +180,7 @@ class LUAParser {
 				}
 
 				// Start of table
-				if(isset($parts[1]) === true && ($parts[1] === '{' || empty($parts[1]) === true)) {
+				if(isset($parts[1]) === true && ($parts[1] === '{' || (empty($parts[1]) === true && $parts[1] != 0))) {
 
 					// When Bracket is in next line, skip the next line
 					$this->_pos += (empty($parts[1]) === true) ? 2 : 1;
@@ -195,15 +195,27 @@ class LUAParser {
 					$this->_pos++;
 				}
 
+				// { }, case
+				else if(isset($parts[1]) == true && $parts[1][0] == '{' &&  mb_strlen($parts[1]) > 1 && ($subpart = trim(substr($parts[1], 1))) && ($subpart == '},' || $subpart == '}')) {
+					$data[$this->getValue($parts[0], true)] = array();
+					$this->_pos++;
+				}
+
 				// Get value
 				else {
-
-					// Save key to avoid multiply function execution
-					$key = $this->getValue($parts[0], true);
-
 					// Data has been found
-					if(mb_strlen($key) > 0 && mb_strlen($parts[1]) > 0) {
-						$data[$key] = $this->getValue($parts[1], false);
+					if (isset($parts[1])) {
+						// There's a key, so save key to avoid multiply function execution
+						$key = $this->getValue($parts[0], true);
+
+						if(mb_strlen($key) > 0 && mb_strlen($parts[1]) > 0) {
+							$data[$key] = $this->getValue($parts[1], false);
+						}
+					} else {
+						// There isn't a key, so just add to the end of the array
+						if (mb_strlen($parts[0]) > 0) {
+							$data[] = $this->getValue($parts[0], false);
+						}
 					}
 
 					// Increase position
